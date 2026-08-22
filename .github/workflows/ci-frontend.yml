@@ -57,4 +57,4 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
-        run: npx --yes @sonar/scan -Dsonar.host.url="$env:SONAR_HOST_URL" -Dsonar.token="$env:SONAR_TOKEN" -Dsonar.qualitygate.wait=true
+        run: npx --yes --package=@sonar/scan sonar-scanner-npm
