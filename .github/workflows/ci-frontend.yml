@@ -30,7 +30,7 @@ jobs:
           fetch-depth: 0
 
       - name: Configurar Node.js 24
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '24'
           cache: npm
@@ -53,9 +53,8 @@ jobs:
         run: npm run build -- --configuration production
 
       - name: Analizar con SonarQube
-        uses: SonarSource/sonarqube-scan-action@v5.2.0
-        with:
-          projectBaseDir: apps/frontend
+        working-directory: apps/frontend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+        run: npx --yes @sonar/scan -Dsonar.host.url="$env:SONAR_HOST_URL" -Dsonar.token="$env:SONAR_TOKEN" -Dsonar.qualitygate.wait=true

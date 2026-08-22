@@ -31,10 +31,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configurar Flutter stable
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
+        shell: pwsh
+        run: |
+          $flutterRoot = Join-Path $env:RUNNER_TOOL_CACHE "flutter-stable"
+          if (-not (Test-Path (Join-Path $flutterRoot "bin\flutter.bat"))) {
+            git clone --depth 1 --branch stable https://github.com/flutter/flutter.git $flutterRoot
+          }
+          Add-Content -Path $env:GITHUB_PATH -Value (Join-Path $flutterRoot "bin")
+          & (Join-Path $flutterRoot "bin\flutter.bat") --version
 
       - name: Instalar dependencias
         run: flutter pub get

@@ -16,9 +16,8 @@ La aplicación base no tenía un target `lint` configurado. Se retiró el script
 
 ## Mobile en Windows
 
-El workflow mobile alcanza el runner, pero `subosito/flutter-action` requiere Bash. En el runner Windows, `bash` está resolviendo al relay de WSL y falla con `execvpe(/bin/bash) failed`. Hay dos opciones válidas:
+El workflow mobile no debe depender de `subosito/flutter-action` en este runner Windows porque esa acción invoca Bash. La configuración fue reemplazada por una instalación nativa mediante PowerShell: clona Flutter stable en `RUNNER_TOOL_CACHE`, añade `bin` a `GITHUB_PATH` y ejecuta `flutter.bat`.
 
-1. Instalar Git Bash y asegurar que `C:\Program Files\Git\bin` esté en el PATH visible por el runner.
-2. Registrar un runner Linux específico para Flutter/mobile, opción recomendada para CI estable.
+El frontend también reemplaza `SonarSource/sonarqube-scan-action`, que invoca Bash, por `npx --yes @sonar/scan`, compatible con el shell PowerShell del runner Windows. El backend conserva el scanner Maven, que ya funciona nativamente en Windows.
 
-No se debe ocultar este error usando `continue-on-error`; el pipeline debe fallar si mobile no puede analizarse.
+No se debe ocultar ningún error con `continue-on-error`; el pipeline debe fallar si un módulo no puede analizarse.

@@ -22,7 +22,7 @@ concurrency:
 jobs:
   build-test-sonarqube:
     name: Backend build, tests and SonarQube
-    runs-on: [self-hosted, linux, guajiranet]
+    runs-on: [self-hosted, Windows, X64]
     defaults:
       run:
         working-directory: apps/backend

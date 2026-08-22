@@ -22,4 +22,3 @@ import { Component } from '@angular/core';
 export class AppComponent {}
 
 bootstrapApplication(AppComponent).catch((error) => console.error(error));
-
