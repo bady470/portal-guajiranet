@@ -1,4 +1,4 @@
-name: Build and publish Docker images
+﻿name: Build and publish Docker images
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: 'Tag adicional para las imágenes, por ejemplo v0.1.0-rc.1'
+        description: 'Tag adicional para las imÃ¡genes, por ejemplo v0.1.0-rc.1'
         required: false
         type: string
 
@@ -45,7 +45,7 @@ jobs:
 
       - name: Compute image tags
         id: meta
-        shell: pwsh
+        shell: powershell
         run: |
           $shortSha = "${env:GITHUB_SHA}".Substring(0, 7)
           "SHORT_SHA=$shortSha" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
@@ -76,3 +76,6 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAMESPACE }}/portal-guajiranet-frontend:sha-${{ steps.meta.outputs.SHORT_SHA }}
             ${{ env.IMAGE_NAMESPACE }}/portal-guajiranet-frontend:${{ steps.meta.outputs.RELEASE_TAG || 'develop' }}
+
+
+
