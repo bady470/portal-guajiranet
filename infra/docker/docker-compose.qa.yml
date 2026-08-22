@@ -1,0 +1,44 @@
+name: portal-guajiranet-qa
+
+services:
+  backend:
+    image: ${BACKEND_IMAGE:?Define BACKEND_IMAGE en el archivo .env de QA}
+    container_name: portal-backend-qa
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-qa}
+      SERVER_PORT: 8080
+      JAVA_TOOL_OPTIONS: ${JAVA_TOOL_OPTIONS:-}
+    ports:
+      - "${BACKEND_PORT:-8081}:8080"
+    networks:
+      - portalnet-qa
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8080/actuator/health || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 6
+      start_period: 45s
+
+  frontend:
+    image: ${FRONTEND_IMAGE:?Define FRONTEND_IMAGE en el archivo .env de QA}
+    container_name: portal-frontend-qa
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT:-4201}:80"
+    networks:
+      - portalnet-qa
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/ || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+
+networks:
+  portalnet-qa:
+    name: portalnet-qa
+    driver: bridge
