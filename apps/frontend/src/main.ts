@@ -19,6 +19,6 @@ import { Component } from '@angular/core';
     p{color:#5d687b;font-size:1.1rem}.status{display:inline-block;padding:.5rem .8rem;border-radius:999px;background:#eaf8ef;color:#19743b;font-weight:600}
   `]
 })
-class AppComponent {}
+export class AppComponent {}
 
 bootstrapApplication(AppComponent).catch((error) => console.error(error));
