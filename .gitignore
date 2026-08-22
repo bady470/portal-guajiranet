@@ -1,0 +1,39 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Java / Maven
+**/target/
+.mvn/
+
+# Node / Angular
+**/node_modules/
+**/dist/
+**/.angular/
+.npm/
+
+# Flutter / Dart
+**/.dart_tool/
+**/build/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/pubspec.lock
+
+# IDEs and OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Coverage and reports
+coverage/
+*.lcov
+reports/
+
+# Local SonarQube data
+infra/sonarqube/.env
