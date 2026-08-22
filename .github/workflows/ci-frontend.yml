@@ -1,0 +1,61 @@
+name: CI Frontend
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'apps/frontend/**'
+      - '.github/workflows/ci-frontend.yml'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'apps/frontend/**'
+      - '.github/workflows/ci-frontend.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-frontend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test-sonarqube:
+    name: Frontend build, tests and SonarQube
+    runs-on: [self-hosted, linux, guajiranet]
+    steps:
+      - name: Checkout completo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/frontend/package.json
+
+      - name: Instalar dependencias
+        working-directory: apps/frontend
+        run: npm install
+
+      - name: Lint
+        working-directory: apps/frontend
+        run: npm run lint --if-present
+
+      - name: Pruebas con cobertura
+        working-directory: apps/frontend
+        run: npm run test -- --watch=false --browsers=ChromeHeadless --code-coverage
+
+      - name: Build de producción
+        working-directory: apps/frontend
+        run: npm run build -- --configuration production
+
+      - name: Analizar con SonarQube
+        uses: SonarSource/sonarqube-scan-action@v5.2.0
+        with:
+          projectBaseDir: apps/frontend
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}

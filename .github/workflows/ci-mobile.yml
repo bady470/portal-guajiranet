@@ -1,0 +1,49 @@
+name: CI Mobile
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'apps/mobile/**'
+      - '.github/workflows/ci-mobile.yml'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'apps/mobile/**'
+      - '.github/workflows/ci-mobile.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-mobile-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  format-analyze-test:
+    name: Mobile format, analysis and tests
+    runs-on: [self-hosted, linux, guajiranet]
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Flutter stable
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Instalar dependencias
+        run: flutter pub get
+
+      - name: Verificar formato
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analisis estático
+        run: flutter analyze
+
+      - name: Pruebas
+        run: flutter test
