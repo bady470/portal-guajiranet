@@ -22,7 +22,7 @@ concurrency:
 jobs:
   build-test-sonarqube:
     name: Frontend build, tests and SonarQube
-    runs-on: [self-hosted, linux, guajiranet]
+    runs-on: [self-hosted, Windows, X64]
     steps:
       - name: Checkout completo
         uses: actions/checkout@v4

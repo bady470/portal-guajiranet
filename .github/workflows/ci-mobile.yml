@@ -22,7 +22,7 @@ concurrency:
 jobs:
   format-analyze-test:
     name: Mobile format, analysis and tests
-    runs-on: [self-hosted, linux, guajiranet]
+    runs-on: [self-hosted, Windows, X64]
     defaults:
       run:
         working-directory: apps/mobile
