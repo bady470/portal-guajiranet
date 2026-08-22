@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: ../../apps/backend
+    container_name: portal-backend-dev
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    networks:
+      - portalnet
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ../../apps/frontend
+    container_name: portal-frontend-dev
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+    networks:
+      - portalnet
+    restart: unless-stopped
+
+networks:
+  portalnet:
+    driver: bridge
