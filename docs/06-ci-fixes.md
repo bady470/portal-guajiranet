@@ -10,6 +10,10 @@ También se actualizó `actions/setup-java` de v4 a v5.
 
 `npm install` falló porque Angular DevKit `22.1.5` exige TypeScript `>=6.0 <6.1`, mientras el proyecto declaraba TypeScript `~5.9.2`. El frontend fue actualizado a `typescript: ~6.0.0`.
 
+## Frontend: lint
+
+La aplicación base no tenía un target `lint` configurado. Se retiró el script `ng lint` del `package.json`; como el workflow utiliza `npm run lint --if-present`, el CI podrá continuar con pruebas, cobertura y build. Cuando se agregue código funcional al frontend, se debe instalar `angular-eslint`, generar su configuración y volver a incorporar el script `lint`.
+
 ## Mobile en Windows
 
 El workflow mobile alcanza el runner, pero `subosito/flutter-action` requiere Bash. En el runner Windows, `bash` está resolviendo al relay de WSL y falla con `execvpe(/bin/bash) failed`. Hay dos opciones válidas:
