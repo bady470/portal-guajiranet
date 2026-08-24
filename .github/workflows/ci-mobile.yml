@@ -6,11 +6,15 @@ on:
     paths:
       - 'apps/mobile/**'
       - '.github/workflows/ci-mobile.yml'
+      - '.github/workflows/deploy-*.yml'
+      - 'infra/docker/**'
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
       - 'apps/mobile/**'
       - '.github/workflows/ci-mobile.yml'
+      - '.github/workflows/deploy-*.yml'
+      - 'infra/docker/**'
 
 permissions:
   contents: read
