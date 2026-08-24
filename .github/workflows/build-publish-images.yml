@@ -1,4 +1,4 @@
-﻿name: Build and publish Docker images
+name: Build and publish Docker images
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: 'Tag adicional para las imÃ¡genes, por ejemplo v0.1.0-rc.1'
+        description: 'Tag adicional para las imágenes, por ejemplo v0.1.0-rc.1'
         required: false
         type: string
 
@@ -29,20 +29,57 @@ env:
   IMAGE_NAMESPACE: ghcr.io/bady470
 
 jobs:
+  quality-gate:
+    name: SonarQube Quality Gate
+    runs-on: [self-hosted, Windows, X64]
+    steps:
+      - name: Verificar Quality Gate backend
+        shell: powershell
+        env:
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACKEND }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:SONAR_HOST_URL)) { throw 'SONAR_HOST_URL no está configurado' }
+          if ([string]::IsNullOrWhiteSpace($env:SONAR_TOKEN)) { throw 'SONAR_TOKEN_BACKEND no está configurado' }
+          $pair = "$env:SONAR_TOKEN:"
+          $encoded = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
+          $headers = @{ Authorization = "Basic $encoded" }
+          $uri = "$env:SONAR_HOST_URL/api/qualitygates/project_status?projectKey=portal-guajiranet-backend"
+          $response = Invoke-RestMethod -Uri $uri -Headers $headers -Method Get
+          $status = $response.projectStatus.status
+          Write-Host "Backend Quality Gate: $status"
+          if ($status -ne 'OK') { throw "Backend Quality Gate no aprobado: $status" }
+
+      - name: Verificar Quality Gate frontend
+        shell: powershell
+        env:
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:SONAR_HOST_URL)) { throw 'SONAR_HOST_URL no está configurado' }
+          if ([string]::IsNullOrWhiteSpace($env:SONAR_TOKEN)) { throw 'SONAR_TOKEN_FRONTEND no está configurado' }
+          $pair = "$env:SONAR_TOKEN:"
+          $encoded = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
+          $headers = @{ Authorization = "Basic $encoded" }
+          $uri = "$env:SONAR_HOST_URL/api/qualitygates/project_status?projectKey=portal-guajiranet-frontend"
+          $response = Invoke-RestMethod -Uri $uri -Headers $headers -Method Get
+          $status = $response.projectStatus.status
+          Write-Host "Frontend Quality Gate: $status"
+          if ($status -ne 'OK') { throw "Frontend Quality Gate no aprobado: $status" }
+
   build-publish:
     name: Build and publish backend/frontend images
+    needs: quality-gate
     runs-on: [self-hosted, Windows, X64]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Compute image tags
         id: meta
         shell: powershell
@@ -56,7 +93,6 @@ jobs:
           } else {
             "RELEASE_TAG=" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
           }
-
       - name: Build and push backend image
         uses: docker/build-push-action@v6
         with:
@@ -66,7 +102,6 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAMESPACE }}/portal-guajiranet-backend:sha-${{ steps.meta.outputs.SHORT_SHA }}
             ${{ env.IMAGE_NAMESPACE }}/portal-guajiranet-backend:${{ steps.meta.outputs.RELEASE_TAG || 'develop' }}
-
       - name: Build and push frontend image
         uses: docker/build-push-action@v6
         with:
@@ -76,6 +111,3 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAMESPACE }}/portal-guajiranet-frontend:sha-${{ steps.meta.outputs.SHORT_SHA }}
             ${{ env.IMAGE_NAMESPACE }}/portal-guajiranet-frontend:${{ steps.meta.outputs.RELEASE_TAG || 'develop' }}
-
-
-
