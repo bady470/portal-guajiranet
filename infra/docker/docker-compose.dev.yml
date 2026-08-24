@@ -2,9 +2,7 @@ name: portal-guajiranet-dev
 
 services:
   backend:
-    build:
-      context: ../../apps/backend
-      dockerfile: Dockerfile
+    image: ${BACKEND_IMAGE:?Define BACKEND_IMAGE para DEV}
     container_name: portal-backend-dev
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
@@ -22,9 +20,7 @@ services:
       start_period: 30s
 
   frontend:
-    build:
-      context: ../../apps/frontend
-      dockerfile: Dockerfile
+    image: ${FRONTEND_IMAGE:?Define FRONTEND_IMAGE para DEV}
     container_name: portal-frontend-dev
     depends_on:
       backend:
