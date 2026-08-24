@@ -6,11 +6,13 @@ on:
     paths:
       - 'apps/backend/**'
       - '.github/workflows/ci-backend.yml'
+      - '.github/workflows/build-publish-images.yml'
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
       - 'apps/backend/**'
       - '.github/workflows/ci-backend.yml'
+      - '.github/workflows/build-publish-images.yml'
 
 permissions:
   contents: read

@@ -6,11 +6,13 @@ on:
     paths:
       - 'apps/frontend/**'
       - '.github/workflows/ci-frontend.yml'
+      - '.github/workflows/build-publish-images.yml'
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
       - 'apps/frontend/**'
       - '.github/workflows/ci-frontend.yml'
+      - '.github/workflows/build-publish-images.yml'
 
 permissions:
   contents: read
