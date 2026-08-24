@@ -18,7 +18,8 @@
     <sonar.projectKey>portal-guajiranet-backend</sonar.projectKey>
     <sonar.projectName>Portal Guajiranet - Backend</sonar.projectName>
     <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
-    <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
+<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
   <dependencies>
     <dependency>
