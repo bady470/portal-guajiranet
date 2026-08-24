@@ -5,12 +5,16 @@ on:
     branches: [main, develop]
     paths:
       - 'apps/mobile/**'
-      - '.github/workflows/ci-mobile.yml'
+   
+      - '.github/workflows/deploy-*.yml'
+      - 'infra/docker/**'
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
       - 'apps/mobile/**'
       - '.github/workflows/ci-mobile.yml'
+      - '.github/workflows/deploy-*.yml'
+      - 'infra/docker/**'
 
 permissions:
   contents: read
@@ -31,7 +35,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configurar Flutter stable
-        shell: pwsh
+        shell: powershell
+
         run: |
           $flutterRoot = Join-Path $env:RUNNER_TOOL_CACHE "flutter-stable"
           if (-not (Test-Path (Join-Path $flutterRoot "bin\flutter.bat"))) {

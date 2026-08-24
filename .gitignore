@@ -2,6 +2,9 @@
 .env
 .env.*
 !.env.example
+!infra/docker/.env.dev.example
+!infra/docker/.env.qa.example
+!infra/docker/.env.prod.example
 *.pem
 *.key
 
